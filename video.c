@@ -14,6 +14,10 @@
 #include "ogl.h"
 #include <unistd.h>
 
+#ifndef AVCODEC_MAX_AUDIO_FRAME_SIZE
+#define AVCODEC_MAX_AUDIO_FRAME_SIZE 192000
+#endif
+
 #define AUDIO_BUFFER_SIZE ((AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2)
 static const int VIDEO_SIZE = 256;
 static const int VIDEO_SIZE_SCALE = 768;
@@ -60,7 +64,7 @@ int video_init( void ) {
 	avcodec_register_all();
 	av_register_all();
 	
-	conv_frame = avcodec_alloc_frame();
+	conv_frame = av_frame_alloc();
 	
 	if( !conv_frame ) {
 		fprintf( stderr, "Warning: Couldn't allocate video conversion frame\n" );
@@ -131,7 +135,7 @@ int video_decode_video_frame( AVPacket *packet ) {
 	
 	if( packet ) {		
 		if( !frame ) {
-			frame = avcodec_alloc_frame();
+			frame = av_frame_alloc();
 			if( !frame ) {
 				fprintf( stderr, "Warning: Couldn't allocate video frame\n" );
 				return -1;
